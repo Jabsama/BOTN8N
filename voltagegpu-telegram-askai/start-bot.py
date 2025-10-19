@@ -195,8 +195,8 @@ class VoltageGPUBot:
         payload = {
             "model": "deepseek-ai/DeepSeek-R1-sgtest",
             "stream": False,
-            "max_tokens": 4096,  # Maximum tokens for comprehensive responses
-            "temperature": 0.9,  # Higher creativity and variability
+            "max_tokens": 2048,  # Balanced for performance and reliability
+            "temperature": 0.8,  # High creativity while maintaining coherence
             "top_p": 0.95,  # Nucleus sampling for better quality
             "frequency_penalty": 0.3,  # Reduce repetition
             "presence_penalty": 0.3,  # Encourage topic diversity
@@ -220,11 +220,11 @@ class VoltageGPUBot:
             ]
         }
         
-        # Make async request with longer timeout
+        # Make async request with extended timeout for complex requests
         loop = asyncio.get_event_loop()
         response = await loop.run_in_executor(
             None,
-            lambda: requests.post(VOLTAGE_API_URL, headers=headers, json=payload, timeout=60)
+            lambda: requests.post(VOLTAGE_API_URL, headers=headers, json=payload, timeout=120)
         )
         
         if response.status_code == 200:
