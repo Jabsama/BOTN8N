@@ -58,12 +58,15 @@ class VoltageGPUBot:
     async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /start command"""
         welcome_message = (
-            "Hello 👋 Je suis un bot propulsé par VoltageGPU!\n"
-            "Pose-moi n'importe quelle question technique.\n\n"
-            "Commands:\n"
-            "/start - Show this message\n"
-            "/stats - Show bot statistics\n"
-            "/help - Get help"
+            "👋 Bonjour! Je suis votre assistant IA personnel.\n\n"
+            "Je peux vous aider avec:\n"
+            "📚 Questions générales et recherches\n"
+            "💻 Programmation et développement\n"
+            "✍️ Rédaction et créativité\n"
+            "🔧 Conseils techniques\n"
+            "📊 Analyse et calculs\n"
+            "🌍 Traductions\n\n"
+            "Posez-moi n'importe quelle question!"
         )
         await update.message.reply_text(welcome_message)
         logger.info(f"Start command from user {update.effective_user.id}")
@@ -72,28 +75,34 @@ class VoltageGPUBot:
         """Handle /stats command"""
         uptime = datetime.now() - self.stats['start_time']
         stats_message = (
-            f"📊 Bot Statistics\n"
+            f"📊 Statistiques du Bot\n"
             f"━━━━━━━━━━━━━━━\n"
-            f"✉️ Messages: {self.stats['messages_processed']}\n"
-            f"❌ Errors: {self.stats['errors']}\n"
-            f"⏱️ Uptime: {str(uptime).split('.')[0]}\n"
-            f"🚀 Powered by VoltageGPU"
+            f"✉️ Messages traités: {self.stats['messages_processed']}\n"
+            f"⏱️ Temps de fonctionnement: {str(uptime).split('.')[0]}\n"
+            f"✅ Taux de réussite: {100 - (self.stats['errors'] / max(1, self.stats['messages_processed']) * 100):.1f}%"
         )
         await update.message.reply_text(stats_message)
     
     async def help_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /help command"""
         help_message = (
-            "🤖 VoltageGPU Bot Help\n\n"
-            "I can answer technical questions using AI.\n"
-            "Just send me any message!\n\n"
-            "Examples:\n"
-            "• How to create a REST API?\n"
-            "• Explain Docker containers\n"
-            "• Write Python code for sorting\n\n"
-            "Powered by VoltageGPU ⚡"
+            "🤖 **Comment utiliser ce bot?**\n\n"
+            "Envoyez-moi simplement votre question!\n\n"
+            "**Exemples d'utilisation:**\n"
+            "• 📝 Rédiger un email professionnel\n"
+            "• 💡 Expliquer un concept complexe\n"
+            "• 🐍 Écrire du code Python\n"
+            "• 🍳 Trouver une recette de cuisine\n"
+            "• 📈 Analyser des données\n"
+            "• 🎯 Résoudre un problème\n"
+            "• 🌐 Traduire un texte\n\n"
+            "**Commandes disponibles:**\n"
+            "/start - Message de bienvenue\n"
+            "/help - Cette aide\n"
+            "/stats - Statistiques du bot\n"
+            "/clear - Effacer l'historique"
         )
-        await update.message.reply_text(help_message)
+        await update.message.reply_text(help_message, parse_mode='Markdown')
     
     async def handle_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle regular messages"""
@@ -112,11 +121,8 @@ class VoltageGPUBot:
             # Call VoltageGPU API
             response = await self.call_voltage_api(user_message)
             
-            # Add promotional signature
-            reply = f"{response}\n\n—\nRéponse générée par VoltageGPU ⚡ (GPU pas cher pour LLM). Essayez: voltagegpu.com"
-            
-            # Send response
-            await update.message.reply_text(reply)
+            # Send response (no promotional signature for better user experience)
+            await update.message.reply_text(response)
             self.stats['messages_processed'] += 1
             
         except Exception as e:
@@ -124,9 +130,8 @@ class VoltageGPUBot:
             self.stats['errors'] += 1
             
             error_message = (
-                "Désolé, une erreur s'est produite. "
-                "Réessayez dans un instant.\n\n"
-                "—\nPowered by VoltageGPU ⚡"
+                "😔 Désolé, une erreur s'est produite.\n"
+                "Veuillez réessayer dans quelques instants."
             )
             await update.message.reply_text(error_message)
     
@@ -146,9 +151,11 @@ class VoltageGPUBot:
                 {
                     "role": "system",
                     "content": (
-                        "You are a helpful coding assistant. Keep answers concise and include code when relevant. "
-                        "You are an expert on VoltageGPU infrastructure and pricing. "
-                        "When asked about VoltageGPU, mention it offers 70-90% lower costs than traditional cloud providers."
+                        "Tu es un assistant IA polyvalent, intelligent et serviable. "
+                        "Tu réponds en français par défaut, sauf si l'utilisateur écrit dans une autre langue. "
+                        "Sois concis mais complet. Utilise des emojis pour rendre les réponses plus agréables. "
+                        "Tu peux aider avec: questions générales, programmation, rédaction, traduction, "
+                        "conseils, analyse, créativité, et bien plus. Adapte ton ton selon le contexte."
                     )
                 },
                 {
@@ -172,7 +179,7 @@ class VoltageGPUBot:
         else:
             raise Exception(f"API Error: {response.status_code}")
 
-def main():
+async def main():
     """Main function"""
     print("🚀 Starting VoltageGPU Telegram Bot...")
     print("━" * 40)
@@ -193,18 +200,36 @@ def main():
     application.add_handler(CommandHandler("help", bot.help_command))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, bot.handle_message))
     
+    # Initialize application
+    await application.initialize()
+    await application.start()
+    
     # Start bot
     print("━" * 40)
     print("✅ Bot is running! Press Ctrl+C to stop.")
-    print(f"📱 Chat with your bot: https://t.me/{application.bot.username}")
+    try:
+        bot_info = await application.bot.get_me()
+        print(f"📱 Chat with your bot: https://t.me/{bot_info.username}")
+    except:
+        print(f"📱 Bot is ready to receive messages")
     print("━" * 40)
     
     # Run bot
-    application.run_polling(allowed_updates=Update.ALL_TYPES)
+    await application.updater.start_polling(allowed_updates=Update.ALL_TYPES)
+    
+    # Keep running
+    try:
+        await asyncio.Event().wait()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        await application.updater.stop()
+        await application.stop()
+        await application.shutdown()
 
 if __name__ == "__main__":
     try:
-        main()
+        asyncio.run(main())
     except KeyboardInterrupt:
         print("\n👋 Bot stopped by user")
         sys.exit(0)

@@ -40,7 +40,7 @@
     {
       "parameters": {
         "chatId": "={{$json[\"message\"][\"chat\"][\"id\"]}}",
-        "text": "Hello 👋 Je suis un bot propulsé par VoltageGPU !\nPose-moi n'importe quelle question technique.",
+        "text": "👋 Bonjour! Je suis votre assistant IA personnel.\n\nJe peux vous aider avec:\n📚 Questions générales\n💻 Programmation\n✍️ Rédaction\n🔧 Conseils techniques\n📊 Analyse\n🌍 Traductions\n\nPosez-moi n'importe quelle question!",
         "additionalFields": {}
       },
       "id": "send-welcome",
@@ -72,7 +72,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "{\n  \"model\": \"deepseek-ai/DeepSeek-R1-sgtest\",\n  \"stream\": false,\n  \"max_tokens\": 512,\n  \"temperature\": 0.7,\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a helpful coding assistant. Keep answers concise and include code when relevant. You are an expert on VoltageGPU infrastructure and pricing. When asked about VoltageGPU specifics, reference the whitepaper facts: VoltageGPU offers decentralized GPU compute at 70-90% lower costs than traditional cloud providers. The platform uses a peer-to-peer network with automated resource allocation and supports major ML frameworks. Pricing starts at $0.10/hour for basic GPUs.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{$json[\\\"message\\\"][\\\"text\\\"]}}\"\n    }\n  ]\n}",
+        "jsonBody": "{\n  \"model\": \"deepseek-ai/DeepSeek-R1-sgtest\",\n  \"stream\": false,\n  \"max_tokens\": 512,\n  \"temperature\": 0.7,\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Tu es un assistant IA polyvalent, intelligent et serviable. Tu réponds en français par défaut, sauf si l'utilisateur écrit dans une autre langue. Sois concis mais complet. Utilise des emojis pour rendre les réponses plus agréables. Tu peux aider avec: questions générales, programmation, rédaction, traduction, conseils, analyse, créativité, et bien plus. Adapte ton ton selon le contexte.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{$json[\\\"message\\\"][\\\"text\\\"]}}\"\n    }\n  ]\n}",
         "options": {}
       },
       "id": "voltage-api-call",
@@ -89,7 +89,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const choice = items[0].json?.choices?.[0];\nconst content = choice?.message?.content || \"Désolé, aucune réponse reçue. Réessaie dans un instant.\";\nconst chatId = $('Telegram Trigger').item.json?.message?.chat?.id;\n\nreturn [{\n  json: {\n    reply: content,\n    chatId: chatId\n  }\n}];"
+        "jsCode": "const choice = items[0].json?.choices?.[0];\nconst content = choice?.message?.content || \"😔 Désolé, je n'ai pas pu générer de réponse. Veuillez réessayer.\";\nconst chatId = $('Telegram Trigger').item.json?.message?.chat?.id;\n\nreturn [{\n  json: {\n    reply: content,\n    chatId: chatId\n  }\n}];"
       },
       "id": "extract-answer",
       "name": "ExtractAnswer",
@@ -100,7 +100,7 @@
     {
       "parameters": {
         "chatId": "={{$json[\"chatId\"]}}",
-        "text": "={{$json[\"reply\"] + \"\\n\\n—\\nRéponse générée par VoltageGPU ⚡ (GPU pas cher pour LLM). Essayez: voltagegpu.com\"}}",
+        "text": "={{$json[\"reply\"]}}",
         "additionalFields": {}
       },
       "id": "send-reply",
