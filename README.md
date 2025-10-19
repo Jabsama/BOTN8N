@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🤖 VoltageGPU Telegram AI Assistant
+# 🤖 Universal AI Telegram Assistant
 
-<img src="https://img.shields.io/badge/Powered%20by-VoltageGPU-blue?style=for-the-badge&logo=nvidia" alt="VoltageGPU">
+<img src="https://img.shields.io/badge/AI-Assistant-blue?style=for-the-badge&logo=openai" alt="AI Assistant">
 <img src="https://img.shields.io/badge/Built%20with-n8n-orange?style=for-the-badge&logo=n8n" alt="n8n">
 <img src="https://img.shields.io/badge/Platform-Telegram-26A5E4?style=for-the-badge&logo=telegram" alt="Telegram">
 
@@ -14,7 +14,7 @@
 
 <br/><br/>
 
-**🚀 Deploy an AI-powered Telegram bot in minutes using n8n and VoltageGPU's decentralized GPU infrastructure**
+**🚀 Your personal AI assistant on Telegram - Ready to help with anything!**
 
 [Quick Start](#-quick-start) • [Features](#-features) • [Installation](#-installation) • [Documentation](#-documentation) • [Support](#-support)
 
@@ -22,15 +22,39 @@
 
 ---
 
+## 🔥 Launch Bot Instantly from Terminal
+
+No n8n? No problem! Run the bot directly:
+
+<div align="center">
+
+```bash
+# 🚀 Navigate to project folder and start
+cd voltagegpu-telegram-askai
+python start-bot.py
+```
+
+</div>
+
+That's it! The bot starts immediately with:
+- 📊 Live statistics dashboard
+- 🔄 Auto-restart on errors  
+- 📝 Real-time logging
+- 🎯 Direct Telegram link
+
+---
+
 ## 🎯 What is This?
 
-A **production-ready Telegram bot** that leverages **VoltageGPU's API** to provide intelligent AI responses at **70-90% lower cost** than traditional cloud providers. Built with **n8n workflow automation** for easy deployment and customization.
+A **versatile AI assistant** for Telegram that can help with virtually any task - from answering questions to writing code, from creative writing to data analysis. Built with modern AI technology for fast, intelligent responses.
 
 ### 💡 Perfect For:
-- 🏢 **Businesses** wanting AI customer support
-- 👨‍💻 **Developers** building AI-powered apps
-- 🎓 **Educators** creating interactive learning bots
-- 🚀 **Startups** needing affordable AI infrastructure
+- 👥 **Everyone** - Personal AI assistant in your pocket
+- 🏢 **Businesses** - Customer support and automation
+- 👨‍💻 **Developers** - Code assistance and debugging
+- 🎓 **Students** - Learning and homework help
+- ✍️ **Writers** - Content creation and editing
+- 🌍 **Travelers** - Translations and recommendations
 
 ---
 
@@ -42,10 +66,10 @@ A **production-ready Telegram bot** that leverages **VoltageGPU's API** to provi
 
 ### 🎨 Core Features
 - ⚡ **Lightning Fast** - Responses in 1-2 seconds
-- 🧠 **Smart AI** - Powered by DeepSeek-R1 model
-- 💰 **Cost Effective** - 70-90% cheaper than AWS/GCP
-- 🔒 **Secure** - No hardcoded secrets
-- 📊 **Analytics Ready** - Optional logging support
+- 🧠 **Smart AI** - Advanced language understanding
+- 🌐 **Multilingual** - Supports all major languages
+- 🔒 **Private & Secure** - Your data stays safe
+- 📊 **Versatile** - Handles any type of request
 
 </td>
 <td width="50%">
@@ -110,6 +134,9 @@ python test-api.py
 Want to run the bot directly from your terminal? Use our standalone script:
 
 ```bash
+# Navigate to project directory
+cd voltagegpu-telegram-askai
+
 # Install dependencies (first time only)
 pip install python-telegram-bot requests python-dotenv
 
@@ -123,6 +150,9 @@ chmod +x start-bot.py
 
 **Windows PowerShell:**
 ```powershell
+# Navigate to project directory
+cd voltagegpu-telegram-askai
+
 # Start the bot
 python start-bot.py
 ```
@@ -262,20 +292,18 @@ Toggle the workflow from<br>
 ```
 👤 You: /start
 
-🤖 Bot: Hello 👋 I'm powered by VoltageGPU!
-        Ask me any technical question.
+🤖 Bot: 👋 Bonjour! Je suis votre assistant IA.
+        Comment puis-je vous aider?
 ```
 
 </td>
 <td width="50%">
 
 ```
-👤 You: How to create a REST API?
+👤 You: Écris-moi un email professionnel
 
-🤖 Bot: Here's a simple Flask example:
-        [code snippet]
-        —
-        Powered by VoltageGPU ⚡
+🤖 Bot: 📧 Voici un modèle d'email professionnel:
+        [email template with proper formatting]
 ```
 
 </td>
@@ -536,6 +564,6 @@ support@voltagegpu.com
 
 **Built with ❤️ by the VoltageGPU Community**
 
-<sub>Powered by [VoltageGPU](https://voltagegpu.com) - Decentralized GPU Computing at 70-90% Lower Cost</sub>
+<sub>Built with ❤️ using open-source technologies • Powered by [VoltageGPU](https://voltagegpu.com)</sub>
 
 </div>

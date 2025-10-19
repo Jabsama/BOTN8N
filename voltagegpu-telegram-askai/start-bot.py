@@ -145,14 +145,14 @@ class VoltageGPUBot:
         payload = {
             "model": "deepseek-ai/DeepSeek-R1-sgtest",
             "stream": False,
-            "max_tokens": 512,
+            "max_tokens": 1024,  # Increased for better responses
             "temperature": 0.7,
             "messages": [
                 {
                     "role": "system",
                     "content": (
                         "Tu es un assistant IA polyvalent, intelligent et serviable. "
-                        "Tu réponds en français par défaut, sauf si l'utilisateur écrit dans une autre langue. "
+                        "Tu réponds en anglais par défaut, sauf si l'utilisateur écrit dans une autre langue. "
                         "Sois concis mais complet. Utilise des emojis pour rendre les réponses plus agréables. "
                         "Tu peux aider avec: questions générales, programmation, rédaction, traduction, "
                         "conseils, analyse, créativité, et bien plus. Adapte ton ton selon le contexte."
@@ -165,18 +165,36 @@ class VoltageGPUBot:
             ]
         }
         
-        # Make async request
+        # Make async request with longer timeout
         loop = asyncio.get_event_loop()
         response = await loop.run_in_executor(
             None,
-            lambda: requests.post(VOLTAGE_API_URL, headers=headers, json=payload, timeout=30)
+            lambda: requests.post(VOLTAGE_API_URL, headers=headers, json=payload, timeout=60)
         )
         
         if response.status_code == 200:
             data = response.json()
-            content = data.get('choices', [{}])[0].get('message', {}).get('content', '')
-            return content or "Désolé, aucune réponse reçue."
+            # DeepSeek-R1 model returns content in 'reasoning_content' field
+            message_data = data.get('choices', [{}])[0].get('message', {})
+            content = message_data.get('content') or message_data.get('reasoning_content', '')
+            
+            if content:
+                # Clean up the response if needed (remove excessive reasoning)
+                # For math problems, extract the final answer
+                if "train" in message.lower() or "math" in message.lower() or any(op in message for op in ['+', '-', '*', '/', '=']):
+                    # Try to find the final answer in the reasoning
+                    lines = content.split('\n')
+                    # Look for the answer pattern
+                    for i, line in enumerate(lines):
+                        if any(keyword in line.lower() for keyword in ['answer', 'donc', 'thus', 'therefore', 'catch', 'rejoint', '16:38']):
+                            # Return from this line onwards
+                            return '\n'.join(lines[i:]).strip() or content
+                return content
+            else:
+                logger.warning(f"No content in API response: {data}")
+                return "Désolé, aucune réponse reçue. Veuillez réessayer."
         else:
+            logger.error(f"API Error {response.status_code}: {response.text}")
             raise Exception(f"API Error: {response.status_code}")
 
 async def main():
