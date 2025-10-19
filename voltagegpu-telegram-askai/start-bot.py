@@ -58,15 +58,15 @@ class VoltageGPUBot:
     async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /start command"""
         welcome_message = (
-            "👋 Bonjour! Je suis votre assistant IA personnel.\n\n"
-            "Je peux vous aider avec:\n"
-            "📚 Questions générales et recherches\n"
-            "💻 Programmation et développement\n"
-            "✍️ Rédaction et créativité\n"
-            "🔧 Conseils techniques\n"
-            "📊 Analyse et calculs\n"
-            "🌍 Traductions\n\n"
-            "Posez-moi n'importe quelle question!"
+            "👋 Hello! I'm your personal AI assistant.\n\n"
+            "I can help you with:\n"
+            "📚 General questions and research\n"
+            "💻 Programming and development\n"
+            "✍️ Writing and creativity\n"
+            "🔧 Technical advice\n"
+            "📊 Analysis and calculations\n"
+            "🌍 Translations\n\n"
+            "Ask me anything!"
         )
         await update.message.reply_text(welcome_message)
         logger.info(f"Start command from user {update.effective_user.id}")
@@ -75,32 +75,32 @@ class VoltageGPUBot:
         """Handle /stats command"""
         uptime = datetime.now() - self.stats['start_time']
         stats_message = (
-            f"📊 Statistiques du Bot\n"
+            f"📊 Bot Statistics\n"
             f"━━━━━━━━━━━━━━━\n"
-            f"✉️ Messages traités: {self.stats['messages_processed']}\n"
-            f"⏱️ Temps de fonctionnement: {str(uptime).split('.')[0]}\n"
-            f"✅ Taux de réussite: {100 - (self.stats['errors'] / max(1, self.stats['messages_processed']) * 100):.1f}%"
+            f"✉️ Messages processed: {self.stats['messages_processed']}\n"
+            f"⏱️ Uptime: {str(uptime).split('.')[0]}\n"
+            f"✅ Success rate: {100 - (self.stats['errors'] / max(1, self.stats['messages_processed']) * 100):.1f}%"
         )
         await update.message.reply_text(stats_message)
     
     async def help_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /help command"""
         help_message = (
-            "🤖 **Comment utiliser ce bot?**\n\n"
-            "Envoyez-moi simplement votre question!\n\n"
-            "**Exemples d'utilisation:**\n"
-            "• 📝 Rédiger un email professionnel\n"
-            "• 💡 Expliquer un concept complexe\n"
-            "• 🐍 Écrire du code Python\n"
-            "• 🍳 Trouver une recette de cuisine\n"
-            "• 📈 Analyser des données\n"
-            "• 🎯 Résoudre un problème\n"
-            "• 🌐 Traduire un texte\n\n"
-            "**Commandes disponibles:**\n"
-            "/start - Message de bienvenue\n"
-            "/help - Cette aide\n"
-            "/stats - Statistiques du bot\n"
-            "/clear - Effacer l'historique"
+            "🤖 **How to use this bot?**\n\n"
+            "Simply send me your question!\n\n"
+            "**Usage examples:**\n"
+            "• 📝 Write a professional email\n"
+            "• 💡 Explain a complex concept\n"
+            "• 🐍 Write Python code\n"
+            "• 🍳 Find a recipe\n"
+            "• 📈 Analyze data\n"
+            "• 🎯 Solve a problem\n"
+            "• 🌐 Translate text\n\n"
+            "**Available commands:**\n"
+            "/start - Welcome message\n"
+            "/help - This help\n"
+            "/stats - Bot statistics\n"
+            "/clear - Clear history"
         )
         await update.message.reply_text(help_message, parse_mode='Markdown')
     
@@ -130,8 +130,8 @@ class VoltageGPUBot:
             self.stats['errors'] += 1
             
             error_message = (
-                "😔 Désolé, une erreur s'est produite.\n"
-                "Veuillez réessayer dans quelques instants."
+                "😔 Sorry, an error occurred.\n"
+                "Please try again in a few moments."
             )
             await update.message.reply_text(error_message)
     
@@ -145,17 +145,22 @@ class VoltageGPUBot:
         payload = {
             "model": "deepseek-ai/DeepSeek-R1-sgtest",
             "stream": False,
-            "max_tokens": 1024,  # Increased for better responses
-            "temperature": 0.7,
+            "max_tokens": 4096,  # Maximum tokens for comprehensive responses
+            "temperature": 0.9,  # Higher creativity and variability
+            "top_p": 0.95,  # Nucleus sampling for better quality
+            "frequency_penalty": 0.3,  # Reduce repetition
+            "presence_penalty": 0.3,  # Encourage topic diversity
             "messages": [
                 {
                     "role": "system",
                     "content": (
-                        "Tu es un assistant IA polyvalent, intelligent et serviable. "
-                        "Tu réponds en anglais par défaut, sauf si l'utilisateur écrit dans une autre langue. "
-                        "Sois concis mais complet. Utilise des emojis pour rendre les réponses plus agréables. "
-                        "Tu peux aider avec: questions générales, programmation, rédaction, traduction, "
-                        "conseils, analyse, créativité, et bien plus. Adapte ton ton selon le contexte."
+                        "You are an exceptionally powerful, versatile, and intelligent AI assistant operating at maximum capacity. "
+                        "You respond in English by default, unless the user writes in another language. "
+                        "Provide comprehensive, detailed, and insightful responses. Use your full analytical capabilities. "
+                        "Be thorough yet clear. Use emojis strategically to enhance communication. "
+                        "You excel at: complex problem-solving, advanced programming, creative writing, deep analysis, "
+                        "technical consulting, data interpretation, multilingual translation, strategic planning, and innovative thinking. "
+                        "Always deliver your absolute best performance. Think deeply, reason carefully, and provide exceptional value."
                     )
                 },
                 {
@@ -186,13 +191,13 @@ class VoltageGPUBot:
                     lines = content.split('\n')
                     # Look for the answer pattern
                     for i, line in enumerate(lines):
-                        if any(keyword in line.lower() for keyword in ['answer', 'donc', 'thus', 'therefore', 'catch', 'rejoint', '16:38']):
+                        if any(keyword in line.lower() for keyword in ['answer', 'thus', 'therefore', 'catch', 'meets', '16:38']):
                             # Return from this line onwards
                             return '\n'.join(lines[i:]).strip() or content
                 return content
             else:
                 logger.warning(f"No content in API response: {data}")
-                return "Désolé, aucune réponse reçue. Veuillez réessayer."
+                return "Sorry, no response received. Please try again."
         else:
             logger.error(f"API Error {response.status_code}: {response.text}")
             raise Exception(f"API Error: {response.status_code}")
