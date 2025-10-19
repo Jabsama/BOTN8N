@@ -22,6 +22,27 @@
 
 ---
 
+## 🔥 Launch Bot Instantly from Terminal
+
+No n8n? No problem! Run the bot directly:
+
+<div align="center">
+
+```bash
+# 🚀 One-line quick start
+python start-bot.py
+```
+
+</div>
+
+That's it! The bot starts immediately with:
+- 📊 Live statistics dashboard
+- 🔄 Auto-restart on errors  
+- 📝 Real-time logging
+- 🎯 Direct Telegram link
+
+---
+
 ## 🎯 What is This?
 
 A **production-ready Telegram bot** that leverages **VoltageGPU's API** to provide intelligent AI responses at **70-90% lower cost** than traditional cloud providers. Built with **n8n workflow automation** for easy deployment and customization.
@@ -104,6 +125,36 @@ cp .env.example .env
 # 4. Test your setup (optional)
 python test-api.py
 ```
+
+### 🚀 Quick Terminal Launch (Without n8n)
+
+Want to run the bot directly from your terminal? Use our standalone script:
+
+```bash
+# Install dependencies (first time only)
+pip install python-telegram-bot requests python-dotenv
+
+# Start the bot
+python start-bot.py
+
+# Or make it executable (Linux/Mac)
+chmod +x start-bot.py
+./start-bot.py
+```
+
+**Windows PowerShell:**
+```powershell
+# Start the bot
+python start-bot.py
+```
+
+The bot will start immediately and show:
+- ✅ Connection status
+- 📱 Direct link to your bot
+- 📊 Real-time logs
+- 📈 Statistics with `/stats` command
+
+Press `Ctrl+C` to stop the bot anytime.
 
 ---
 
