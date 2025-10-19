@@ -1,0 +1,181 @@
+{
+  "name": "VoltageGPU Telegram Ask-AI Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ]
+      },
+      "id": "telegram-trigger",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300],
+      "credentials": {
+        "telegramApi": {
+          "id": "__REPLACE__",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"message\"][\"text\"]}}",
+              "operation": "contains",
+              "value2": "/start"
+            }
+          ]
+        }
+      },
+      "id": "if-start",
+      "name": "IF /start?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "Hello 👋 Je suis un bot propulsé par VoltageGPU !\nPose-moi n'importe quelle question technique.",
+        "additionalFields": {}
+      },
+      "id": "send-welcome",
+      "name": "Send Welcome",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [650, 200],
+      "credentials": {
+        "telegramApi": {
+          "id": "__REPLACE__",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.voltagegpu.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"model\": \"deepseek-ai/DeepSeek-R1-sgtest\",\n  \"stream\": false,\n  \"max_tokens\": 512,\n  \"temperature\": 0.7,\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a helpful coding assistant. Keep answers concise and include code when relevant. You are an expert on VoltageGPU infrastructure and pricing. When asked about VoltageGPU specifics, reference the whitepaper facts: VoltageGPU offers decentralized GPU compute at 70-90% lower costs than traditional cloud providers. The platform uses a peer-to-peer network with automated resource allocation and supports major ML frameworks. Pricing starts at $0.10/hour for basic GPUs.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{$json[\\\"message\\\"][\\\"text\\\"]}}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "voltage-api-call",
+      "name": "VoltageGPU Chat",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [650, 400],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "__REPLACE__",
+          "name": "VoltageGPU API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const choice = items[0].json?.choices?.[0];\nconst content = choice?.message?.content || \"Désolé, aucune réponse reçue. Réessaie dans un instant.\";\nconst chatId = $('Telegram Trigger').item.json?.message?.chat?.id;\n\nreturn [{\n  json: {\n    reply: content,\n    chatId: chatId\n  }\n}];"
+      },
+      "id": "extract-answer",
+      "name": "ExtractAnswer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 400]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"chatId\"]}}",
+        "text": "={{$json[\"reply\"] + \"\\n\\n—\\nRéponse générée par VoltageGPU ⚡ (GPU pas cher pour LLM). Essayez: voltagegpu.com\"}}",
+        "additionalFields": {}
+      },
+      "id": "send-reply",
+      "name": "Send Reply",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [1050, 400],
+      "credentials": {
+        "telegramApi": {
+          "id": "__REPLACE__",
+          "name": "Telegram Bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "IF /start?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF /start?": {
+      "main": [
+        [
+          {
+            "node": "Send Welcome",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "VoltageGPU Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VoltageGPU Chat": {
+      "main": [
+        [
+          {
+            "node": "ExtractAnswer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExtractAnswer": {
+      "main": [
+        [
+          {
+            "node": "Send Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1.0.0",
+  "meta": {
+    "instanceId": "voltagegpu-telegram-bot"
+  },
+  "tags": []
+}
