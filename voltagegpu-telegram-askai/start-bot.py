@@ -121,8 +121,8 @@ class VoltageGPUBot:
             # Call VoltageGPU API
             response = await self.call_voltage_api(user_message)
             
-            # Send response (no promotional signature for better user experience)
-            await update.message.reply_text(response)
+            # Split and send response if too long
+            await self.send_long_message(update, response)
             self.stats['messages_processed'] += 1
             
         except Exception as e:
@@ -134,6 +134,56 @@ class VoltageGPUBot:
                 "Please try again in a few moments."
             )
             await update.message.reply_text(error_message)
+    
+    async def send_long_message(self, update: Update, text: str, max_length: int = 4000):
+        """Split and send long messages across multiple Telegram messages"""
+        if len(text) <= max_length:
+            await update.message.reply_text(text)
+            return
+        
+        # Split message into chunks
+        chunks = []
+        current_chunk = ""
+        
+        # Split by paragraphs first to maintain readability
+        paragraphs = text.split('\n\n')
+        
+        for paragraph in paragraphs:
+            # If single paragraph is too long, split by sentences
+            if len(paragraph) > max_length:
+                sentences = paragraph.split('. ')
+                for sentence in sentences:
+                    if len(current_chunk) + len(sentence) + 2 <= max_length:
+                        current_chunk += sentence + '. '
+                    else:
+                        if current_chunk:
+                            chunks.append(current_chunk.strip())
+                        current_chunk = sentence + '. '
+            else:
+                # Try to add paragraph to current chunk
+                if len(current_chunk) + len(paragraph) + 2 <= max_length:
+                    current_chunk += paragraph + '\n\n'
+                else:
+                    if current_chunk:
+                        chunks.append(current_chunk.strip())
+                    current_chunk = paragraph + '\n\n'
+        
+        # Add remaining chunk
+        if current_chunk:
+            chunks.append(current_chunk.strip())
+        
+        # Send chunks with part indicators
+        total_parts = len(chunks)
+        for i, chunk in enumerate(chunks, 1):
+            if total_parts > 1:
+                part_header = f"📄 Part {i}/{total_parts}\n{'─' * 20}\n\n"
+                await update.message.reply_text(part_header + chunk)
+            else:
+                await update.message.reply_text(chunk)
+            
+            # Small delay between messages to avoid rate limiting
+            if i < total_parts:
+                await asyncio.sleep(0.5)
     
     async def call_voltage_api(self, message: str) -> str:
         """Call VoltageGPU API"""
